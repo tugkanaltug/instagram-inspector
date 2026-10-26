@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <title>Instagram Inspector</title>
+    <link rel="stylesheet" href="dashboard.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"><img src="icons/icon-48.png" alt=""></span>
+          <div>
+            <strong>Instagram Inspector</strong>
+            <span data-i18n="brand.subtitle">Local Instagram analysis</span>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Main menu" data-i18n-aria="nav.label">
+          <button class="nav-item is-active" type="button" data-view="overview">
+            <span class="nav-icon" aria-hidden="true">⌂</span>
+            <span data-i18n="nav.overview">Overview</span>
+          </button>
+          <button class="nav-item" type="button" data-view="non-followers">
+            <span class="nav-icon" aria-hidden="true">↛</span>
+            <span data-i18n="nav.nonFollowers">Not following back</span>
+            <span class="nav-count" id="nav-non-followers-count">0</span>
+          </button>
+          <button class="nav-item" type="button" data-view="changes">
+            <span class="nav-icon" aria-hidden="true">±</span>
+            <span data-i18n="nav.changes">Changes</span>
+          </button>
+          <button class="nav-item" type="button" data-view="stories">
+            <span class="nav-icon" aria-hidden="true">▷</span>
+            <span data-i18n="nav.stories">Stories</span>
+            <span class="nav-count" id="nav-stories-count">0</span>
+          </button>
+          <button class="nav-item" type="button" data-view="data">
+            <span class="nav-icon" aria-hidden="true">⇅</span>
+            <span data-i18n="nav.data">Data and snapshots</span>
+          </button>
+        </nav>
+
+        <div class="privacy-note">
+          <span class="status-dot" aria-hidden="true"></span>
+          <div>
+            <strong data-i18n="privacy.title">Only on this device</strong>
+            <span data-i18n="privacy.detail">Data is not sent to a third-party server.</span>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" id="page-eyebrow">CURRENT STATUS</p>
+            <h1 id="page-title">Overview</h1>
+            <p class="page-subtitle" id="page-subtitle">Review follow relationships in one place.</p>
+          </div>
+          <div class="topbar-actions">
+            <label class="select-field compact language-field">
+              <span class="sr-only" data-i18n="language.label">Language</span>
+              <select id="language-select" aria-label="Language" data-i18n-aria="language.label">
+                <option value="en">English</option>
+                <option value="tr">Türkçe</option>
+              </select>
+            </label>
+            <label class="select-field compact">
+              <span class="sr-only" data-i18n="snapshot.displayed">Displayed snapshot</span>
+              <select id="active-snapshot-select" aria-label="Displayed snapshot" data-i18n-aria="snapshot.displayed"></select>
+            </label>
+            <button class="button secondary" id="open-instagram-button" type="button" data-i18n="common.openInstagram">Open Instagram</button>
+            <button class="button primary" type="button" data-view="data" data-i18n="common.collect">Collect lists</button>
+          </div>
+        </header>
+
+        <div id="global-warning" class="notice warning is-hidden" role="status"></div>
+
+        <section class="view is-active" id="view-overview" data-view-panel="overview">
+          <div class="metric-grid">
+            <article class="metric-card accent-purple">
+              <span class="metric-label" data-i18n="overview.followers">Followers</span>
+              <strong class="metric-value" id="metric-followers">—</strong>
+              <span class="metric-meta" id="metric-followers-meta">Waiting for list</span>
+            </article>
+            <article class="metric-card accent-blue">
+              <span class="metric-label" data-i18n="overview.following">Following</span>
+              <strong class="metric-value" id="metric-following">—</strong>
+              <span class="metric-meta" id="metric-following-meta">Waiting for list</span>
+            </article>
+            <article class="metric-card accent-orange">
+              <span class="metric-label" data-i18n="overview.nonFollowers">Not following back</span>
+              <strong class="metric-value" id="metric-non-followers">—</strong>
+              <span class="metric-meta" id="metric-non-followers-meta">Waiting for comparison</span>
+            </article>
+            <article class="metric-card accent-green">
+              <span class="metric-label" data-i18n="overview.mutual">Mutual follows</span>
+              <strong class="metric-value" id="metric-mutual">—</strong>
+              <span class="metric-meta" data-i18n="overview.visibleAccounts">Among visible accounts</span>
+            </article>
+          </div>
+
+          <div class="overview-grid">
+            <article class="panel hero-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow" data-i18n="overview.lastSnapshot">LATEST SNAPSHOT</p>
+                  <h2 id="overview-snapshot-title">No data yet</h2>
+                </div>
+                <span class="quality-pill" id="overview-quality-pill">Waiting</span>
+              </div>
+              <p id="overview-summary">Add the Followers and Following lists to create your first snapshot.</p>
+              <div class="coverage" id="overview-coverage"></div>
+              <button class="text-button" type="button" data-view="data" data-i18n="overview.goData">Go to data collection →</button>
+            </article>
+
+            <article class="panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow" data-i18n="security.eyebrow">SECURITY</p>
+                  <h2 data-i18n="security.title">Read-only operation</h2>
+                </div>
+              </div>
+              <ul class="check-list">
+                <li data-i18n="security.one">Does not follow or unfollow accounts.</li>
+                <li data-i18n="security.two">Does not store passwords or session cookies.</li>
+                <li data-i18n="security.three">Clearly marks incomplete lists.</li>
+                <li data-i18n="security.four">Keeps data in Chrome local storage.</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-non-followers" data-view-panel="non-followers">
+          <div class="section-toolbar">
+            <div>
+              <h2 data-i18n="nonFollowers.title">Not following back</h2>
+              <p id="non-followers-description" data-i18n="nonFollowers.detail">Visible accounts you follow that do not follow you back.</p>
+            </div>
+            <div class="list-controls">
+              <label class="search-field">
+                <span aria-hidden="true">⌕</span>
+                <input id="non-followers-search" type="search" placeholder="Search username or name" data-i18n-placeholder="common.searchPlaceholder">
+              </label>
+              <label class="select-field">
+                <span class="sr-only" data-i18n="common.sort">Sort</span>
+                <select id="non-followers-sort" aria-label="Sort" data-i18n-aria="common.sort">
+                  <option value="source" data-i18n="common.instagramOrder">Instagram order</option>
+                  <option value="username-asc" data-i18n="common.usernameAsc">Username A–Z</option>
+                  <option value="username-desc" data-i18n="common.usernameDesc">Username Z–A</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div id="non-followers-quality" class="notice is-hidden"></div>
+          <div class="people-grid" id="non-followers-list"></div>
+        </section>
+
+        <section class="view" id="view-changes" data-view-panel="changes">
+          <div class="section-toolbar">
+            <div>
+              <h2 data-i18n="changes.title">Changes</h2>
+              <p data-i18n="changes.detail">Accounts added or no longer present between two snapshots.</p>
+            </div>
+            <div class="comparison-selects">
+              <label class="select-field labeled">
+                <span data-i18n="changes.previous">Previous</span>
+                <select id="previous-snapshot-select"></select>
+              </label>
+              <span class="comparison-arrow" aria-hidden="true">→</span>
+              <label class="select-field labeled">
+                <span data-i18n="changes.current">Current</span>
+                <select id="current-snapshot-select"></select>
+              </label>
+            </div>
+          </div>
+
+          <div class="change-tabs" role="tablist" aria-label="Change types" data-i18n-aria="changes.tabsLabel">
+            <button class="change-tab is-active" type="button" data-change-group="lostFollowers">
+              <span data-i18n="changes.lostFollowers">Stopped following you</span> <span id="change-count-lostFollowers">0</span>
+            </button>
+            <button class="change-tab" type="button" data-change-group="removedFollowing">
+              <span data-i18n="changes.removedFollowing">You no longer follow</span> <span id="change-count-removedFollowing">0</span>
+            </button>
+            <button class="change-tab" type="button" data-change-group="newFollowers">
+              <span data-i18n="changes.newFollowers">New followers</span> <span id="change-count-newFollowers">0</span>
+            </button>
+            <button class="change-tab" type="button" data-change-group="newFollowing">
+              <span data-i18n="changes.newFollowing">New following</span> <span id="change-count-newFollowing">0</span>
+            </button>
+            <button class="change-tab" type="button" data-change-group="changedProfilePhotos">
+              <span data-i18n="changes.changedProfilePhotos">Changed profile photos</span> <span id="change-count-changedProfilePhotos">0</span>
+            </button>
+          </div>
+          <div id="changes-quality" class="notice is-hidden"></div>
+          <div class="people-grid" id="changes-list"></div>
+        </section>
+
+        <section class="view" id="view-stories" data-view-panel="stories">
+          <div class="section-toolbar">
+            <div>
+              <h2 data-i18n="stories.title">Stories</h2>
+              <p data-i18n="stories.detail">Active stories served on Instagram Home for accounts you follow.</p>
+            </div>
+            <button class="button primary" id="refresh-stories-button" type="button" data-i18n="stories.refresh">Refresh stories</button>
+          </div>
+
+          <div class="notice warning story-warning" data-i18n="stories.warning">
+            Your Instagram session is used. Stories are not saved to snapshots or local storage. The extension does not send a “seen” request, but it cannot guarantee that Instagram will not record viewing.
+          </div>
+          <div id="stories-status" class="notice is-hidden" role="status"></div>
+          <div id="stories-grid" class="story-grid"></div>
+        </section>
+
+        <section class="view" id="view-data" data-view-panel="data">
+          <div class="section-toolbar">
+            <div>
+              <h2 data-i18n="data.title">Data and snapshots</h2>
+              <p data-i18n="data.detail">Read an Instagram list automatically or select a previously created JSON file.</p>
+            </div>
+          </div>
+
+          <div class="capture-grid">
+            <article class="capture-card" id="followers-capture-card">
+              <div class="capture-number">01</div>
+              <div class="capture-content">
+                <p class="eyebrow">FOLLOWERS</p>
+                <h3 data-i18n="data.followersTitle">Add follower list</h3>
+                <p data-i18n="data.followersDetail">Keep your own Instagram profile open. The extension opens Followers and scrolls to the end automatically.</p>
+                <div class="capture-status" id="followers-capture-status">Not added yet</div>
+                <div class="button-row">
+                  <button class="button primary" type="button" data-capture-kind="followers" data-i18n="data.autoCollect">Collect automatically</button>
+                  <label class="button secondary file-button">
+                    <span data-i18n="data.selectJson">Select JSON</span>
+                    <input type="file" accept="application/json,.json" data-import-kind="followers">
+                  </label>
+                </div>
+              </div>
+            </article>
+
+            <article class="capture-card" id="following-capture-card">
+              <div class="capture-number">02</div>
+              <div class="capture-content">
+                <p class="eyebrow">FOLLOWING</p>
+                <h3 data-i18n="data.followingTitle">Add following list</h3>
+                <p data-i18n="data.followingDetail">Keep your own Instagram profile open. The extension opens Following and scrolls to the end automatically.</p>
+                <div class="capture-status" id="following-capture-status">Not added yet</div>
+                <div class="button-row">
+                  <button class="button primary" type="button" data-capture-kind="following" data-i18n="data.autoCollect">Collect automatically</button>
+                  <label class="button secondary file-button">
+                    <span data-i18n="data.selectJson">Select JSON</span>
+                    <input type="file" accept="application/json,.json" data-import-kind="following">
+                  </label>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <article class="panel save-panel">
+            <div>
+              <p class="eyebrow" data-i18n="data.createEyebrow">CREATE SNAPSHOT</p>
+              <h2 data-i18n="data.createTitle">Save both lists with a date</h2>
+              <p data-i18n="data.createDetail">A new snapshot can be compared with earlier records. Incomplete lists can be saved, but their results are shown with a warning.</p>
+            </div>
+            <div class="save-controls">
+              <input id="snapshot-label" type="text" maxlength="80" placeholder="Optional name" data-i18n-placeholder="data.optionalName">
+              <button class="button primary large" id="save-snapshot-button" type="button" data-i18n="data.save">Save snapshot</button>
+            </div>
+          </article>
+
+          <article class="panel snapshot-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow" data-i18n="data.history">HISTORY</p>
+                <h2 data-i18n="data.records">Snapshot records</h2>
+              </div>
+              <button class="button secondary" id="export-all-button" type="button" data-i18n="data.exportAll">Export all</button>
+            </div>
+            <div class="snapshot-list" id="snapshot-list"></div>
+          </article>
+        </section>
+      </main>
+    </div>
+
+    <div class="story-modal is-hidden" id="story-modal" role="dialog" aria-modal="true" aria-labelledby="story-viewer-username">
+      <button class="story-modal-backdrop" type="button" data-close-story aria-label="Close story viewer" data-i18n-aria="viewer.closeDialog"></button>
+      <div class="story-viewer">
+        <header class="story-viewer-header">
+          <span class="story-viewer-avatar" id="story-viewer-avatar" aria-hidden="true"></span>
+          <div class="story-viewer-account">
+            <strong id="story-viewer-username"></strong>
+            <span id="story-viewer-meta"></span>
+          </div>
+          <button class="story-close-button" type="button" data-close-story aria-label="Close" data-i18n-aria="viewer.close">×</button>
+        </header>
+        <div class="story-progress" id="story-progress"></div>
+        <div class="story-stage" id="story-stage"></div>
+        <div class="story-viewer-controls">
+          <button class="button secondary" id="previous-story-button" type="button" data-i18n="viewer.previous">← Previous</button>
+          <span id="story-position"></span>
+          <button class="button secondary" id="next-story-button" type="button" data-i18n="viewer.next">Next →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="dashboard.js?v=0.3.1"></script>
+  </body>
+</html>
